@@ -1,11 +1,13 @@
 from enum import Enum
+from htmlnode import HTMLNode, LeafNode
 
 class TextType(Enum):
-	BOLD = "**"
-	ITALIC = "_"
-	CODE = "`"
-	LINK = "[anchor text](url)"
-	IMAGES = "![alt text](url)"
+    TEXT = '"'
+    BOLD = "**"
+    ITALIC = "_"
+    CODE = "`"
+    LINK = "[anchor text](url)"
+    IMAGES = "![alt text](url)"
 
 class TextNode():
     def __init__(self, text, text_type, url=None):
@@ -34,4 +36,23 @@ class TextNode():
     def __repr__(self):
         return f"TextNode({self.text}, {self.text_type}, {self.url})"
 
-
+def text_node_to_html_node(text_node):
+    match(text_node.text_type):
+        case(text_node.text_type.TEXT):
+            print("text: ", text_node.text)
+            return LeafNode(text_node.text)
+        case(text_node.text_type.BOLD):
+            print("bold", text_node.text)
+            return LeafNode(text_node.text, "b")
+        case(text_node.text_type.ITALIC):
+            print("italic", text_node.text)
+            return LeafNode(text_node.text, "i")
+        case(text_node.text_type.CODE):
+            return LeafNode(text_node.text, "code")
+        case(text_node.text_type.LINK):
+            return HTMLNode("a", text_node.text, None, {"href": text_node.url})
+        case(text_node.text_type.IMAGES):
+            print("image", text_node.text)
+            return HTMLNode("img", None, None, {"src": text_node.url, "alt": text_node.text})
+        case _:
+            raise Exception
